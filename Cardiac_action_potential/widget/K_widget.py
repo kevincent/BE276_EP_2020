@@ -5,8 +5,11 @@ from math import exp, log, sqrt, pi, fsum
 from ipywidgets import interact, FloatSlider, Dropdown
 
 class Markov_Widget():
-    
     def __init__ (self):
+        self.SSA_data = np.loadtxt("widget/SS.txt",dtype='float')
+        self.V = self.SSA_data[:,0]
+        self.I = self.SSA_data[:,1]
+
         interact(self.solve_and_plot,
                  P1 = FloatSlider(value=45, min=0, max=100, step=1, description='$P1$', continuous_update=False),
                  P2 = FloatSlider(value=20, min=0, max=100, step=1, description='$P2$', continuous_update=False),
@@ -25,10 +28,8 @@ class Markov_Widget():
     def solve_and_plot(self,P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13):
         
         # The parameter vector
-        
-        SSA_data = np.loadtxt("widget/SS.txt",dtype='float')
-        V = SSA_data[:,0]
-        I = SSA_data[:,1]        
+        V = self.V
+        I = self.I
         init_params = [P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13]
         step_length = 1000
         
