@@ -21,6 +21,12 @@ class VentricularAPWidget():
     #The widget
      
     def __init__(self):
+
+        self.Pd = set_Pd()
+        self.y0 = Initialize(np.load('widget/Widget_init.npy'))
+        self.t = np.linspace(0,1000,1001)
+        self.Y_default = odeint(grandi_bers_rhs, self.y0, self.t, (self.Pd,))
+
         style = {'description_width': '150px'}
         layout = {'width': '400px'}
         interact(self.solve_and_plot,
@@ -48,19 +54,17 @@ class VentricularAPWidget():
          
         Params_to_change = [epi_endo, GNa_coeff, GtoSlow_coeff, GtoFast_coeff, Gkr_coeff, Gks_coeff, Gkp_coeff, 
                             Gk1_coeff, GClCa_coeff, pCa_coeff, VNCX_coeff, VNaK_coeff, GNaB_coeff, GCaB_coeff, GClB_coeff] 
+        t = self.t
+        Y_default = self.Y_default
+        y0 = self.y0
         
-        
-        Pd = set_Pd()
-        y0 = Initialize(np.load('widget/Widget_init.npy'))
-        t = np.linspace(0,1000,1001)
-        Y = odeint(grandi_bers_rhs, y0, t, (Pd,))
         plt.figure(1)
-        plt.plot(t,Y[:, name2index("Vmo")]);
+        plt.plot(t,Y_default[:, name2index("Vmo")]);
         plt.figure(2)
-        plt.plot(t,Y[:, name2index("Caio")]*1000);
+        plt.plot(t,Y_default[:, name2index("Caio")]*1000);
+
         Pd = set_Pd(Params_to_change)
-        y0 = Initialize(np.load('widget/Widget_init.npy'))
-        t = np.linspace(0,1000,1001)
+        
         Y = odeint(grandi_bers_rhs, y0, t, (Pd,))
         plt.figure(1)
         plt.plot(t,Y[:, name2index("Vmo")]);
@@ -80,6 +84,17 @@ class VentricularAPWidget2():
     #The widget
     
     def __init__(self):
+        
+        self.Pd = set_Pd()
+        self.y0 = Initialize(np.load('widget/Widget_init.npy'))
+        self.t = np.linspace(0,1000,1001)
+        self.Y_ventricle = odeint(grandi_bers_rhs, self.y0, self.t, (self.Pd,))
+
+        self.Pd_atrial = set_Pd_atrial()
+        self.y0_atrial = Initialize_atrial(np.load('widget/Widget_init_atrial.npy'))
+        self.Y_atrial = odeint(grandi_bers_rhs_atrial, self.y0_atrial, self.t, (self.Pd_atrial,))
+
+
         style = {'description_width': '150px'}
         layout = {'width': '400px'}
         interact(self.solve_and_plot,
@@ -109,27 +124,25 @@ class VentricularAPWidget2():
         Params_to_change = [epi_endo, GNa_coeff, GtoSlow_coeff, GtoFast_coeff, Gkr_coeff, Gks_coeff, Gkp_coeff, 
                             Gk1_coeff, GClCa_coeff, pCa_coeff, VNCX_coeff, VNaK_coeff, GNaB_coeff, GCaB_coeff, GClB_coeff] 
         
-        Pd = set_Pd()
-        y0 = Initialize(np.load('widget/Widget_init.npy'))
-        t = np.linspace(0,1000,1001)
-        Y = odeint(grandi_bers_rhs, y0, t, (Pd,))
-        plt.figure(1)
-        plt.plot(t,Y[:, name2index("Vmo")])
-        plt.figure(2)
-        plt.plot(t,Y[:, name2index("Caio")]*1000)
+
+        y0 = self.y0
+        t = self.t
+        Y_ventricle = self.Y_ventricle
+        Y_atrial = self.Y_atrial
+
         
-        Pd_atrial = set_Pd_atrial()
-        y0 = Initialize_atrial(np.load('widget/Widget_init_atrial.npy'))
-        t = np.linspace(0,1000,1001)
-        Y = odeint(grandi_bers_rhs_atrial, y0, t, (Pd_atrial,))
         plt.figure(1)
-        plt.plot(t,Y[:, name2index_atrial("Vmo")])
+        plt.plot(t,Y_ventricle[:, name2index("Vmo")])
         plt.figure(2)
-        plt.plot(t,Y[:, name2index_atrial("Caio")]*1000)
+        plt.plot(t,Y_ventricle[:, name2index("Caio")]*1000)
+        
+        
+        plt.figure(1)
+        plt.plot(t,Y_atrial[:, name2index_atrial("Vmo")])
+        plt.figure(2)
+        plt.plot(t,Y_atrial[:, name2index_atrial("Caio")]*1000)
         
         Pd = set_Pd(Params_to_change)
-        y0 = Initialize(np.load('widget/Widget_init.npy'))
-        t = np.linspace(0,1000,1001)
         Y = odeint(grandi_bers_rhs, y0, t, (Pd,))
         plt.figure(1)
         plt.plot(t,Y[:, name2index("Vmo")])
@@ -150,6 +163,17 @@ class AtrialAPWidget():
     #The widget
     
     def __init__(self):
+
+        self.Pd = set_Pd()
+        self.y0 = Initialize(np.load('widget/Widget_init.npy'))
+        self.t = np.linspace(0,1000,1001)
+        self.Y_ventricle = odeint(grandi_bers_rhs, self.y0, self.t, (self.Pd,))
+
+        self.Pd_atrial = set_Pd_atrial()
+        self.y0_atrial = Initialize_atrial(np.load('widget/Widget_init_atrial.npy'))
+        self.Y_atrial = odeint(grandi_bers_rhs_atrial, self.y0_atrial, self.t, (self.Pd_atrial,))
+
+
         style = {'description_width': '150px'}
         layout = {'width': '400px'}
         interact(self.solve_and_plot,        
@@ -180,28 +204,23 @@ class AtrialAPWidget():
         Params_to_change = [GNa_coeff, GtoFast_coeff, Gkr_coeff, Gkur_coeff, Gks_coeff, Gkp_coeff, 
                             Gk1_coeff, GClCa_coeff, pCa_coeff, VNCX_coeff, VNaK_coeff, GNaB_coeff, GCaB_coeff, GClB_coeff, GkAch_coeff, Ach] 
         
-        Pd_atrial = set_Pd_atrial()
-        y0 = Initialize_atrial(np.load('widget/Widget_init_atrial.npy'))
-        t = np.linspace(0,1000,1001)
-        Y = odeint(grandi_bers_rhs_atrial, y0, t, (Pd_atrial,))
+        y0_atrial = self.y0_atrial
+        t = self.t
+        Y_ventricle = self.Y_ventricle
+        Y_atrial = self.Y_atrial
+
         plt.figure(1)
-        plt.plot(t,Y[:, name2index_atrial("Vmo")])
+        plt.plot(t,Y_atrial[:, name2index_atrial("Vmo")])
         plt.figure(2)
-        plt.plot(t,Y[:, name2index_atrial("Caio")]*1000)
+        plt.plot(t,Y_atrial[:, name2index_atrial("Caio")]*1000)
         
-        Pd = set_Pd()
-        y0 = Initialize(np.load('widget/Widget_init.npy'))
-        t = np.linspace(0,1000,1001)
-        Y = odeint(grandi_bers_rhs, y0, t, (Pd,))
         plt.figure(1)
-        plt.plot(t,Y[:,name2index("Vmo")])
+        plt.plot(t,Y_ventricle[:,name2index("Vmo")])
         plt.figure(2)
-        plt.plot(t,Y[:,name2index("Caio")]*1000)
+        plt.plot(t,Y_ventricle[:,name2index("Caio")]*1000)
         
         Pd_atrial = set_Pd_atrial(Params_to_change)
-        y0 = Initialize_atrial(np.load('widget/Widget_init_atrial.npy'))
-        t = np.linspace(0,1000,1001)
-        Y = odeint(grandi_bers_rhs_atrial, y0, t, (Pd_atrial,))
+        Y = odeint(grandi_bers_rhs_atrial, y0_atrial, t, (Pd_atrial,))
         plt.figure(1)
         plt.plot(t,Y[:,name2index_atrial("Vmo")])
         plt.legend((r'Atrial',r'Ventricular',r'$new$ Atrial'))
