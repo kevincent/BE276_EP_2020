@@ -24,7 +24,7 @@ class VentricularAPWidget():
 
         self.Pd = set_Pd()
         self.y0 = Initialize(np.load('widget/Widget_init.npy'))
-        self.t = np.linspace(0,1000,1001)
+        self.t = np.linspace(0,800,801)
         self.Y_default = odeint(grandi_bers_rhs, self.y0, self.t, (self.Pd,))
 
         style = {'description_width': '150px'}
@@ -87,7 +87,7 @@ class VentricularAPWidget2():
         
         self.Pd = set_Pd()
         self.y0 = Initialize(np.load('widget/Widget_init.npy'))
-        self.t = np.linspace(0,1000,1001)
+        self.t = np.linspace(0,800,801)
         self.Y_ventricle = odeint(grandi_bers_rhs, self.y0, self.t, (self.Pd,))
 
         self.Pd_atrial = set_Pd_atrial()
@@ -166,7 +166,7 @@ class AtrialAPWidget():
 
         self.Pd = set_Pd()
         self.y0 = Initialize(np.load('widget/Widget_init.npy'))
-        self.t = np.linspace(0,1000,1001)
+        self.t = np.linspace(0,800,801)
         self.Y_ventricle = odeint(grandi_bers_rhs, self.y0, self.t, (self.Pd,))
 
         self.Pd_atrial = set_Pd_atrial()
@@ -521,7 +521,7 @@ def grandi_bers_rhs(y, t, Pd):
 
     ydot = [d_m,d_h, d_j, d_d, d_f,d_fcaBj, d_fcaBsl, d_xtos, d_ytos,d_xtof, d_ytof, d_xkr, d_xks, d_RyRr, d_RyRo, d_RyRi, d_NaBj, d_NaBsl, d_TnCL, d_TnCHc, d_TnCHm, d_CaM, d_Myoc, d_Myom,  d_SRB, d_SLLj, d_SLLsl, d_SLHj, d_SLHsl, d_Csqnb, d_Ca_sr, d_Naj, d_Nasl, d_Nai, d_Ki, d_Caj, d_Casl, d_Cai, d_Vm]
 
-    ydot = list(map(lambda x,y:x*y, ydot, Pd['dynamic']))
+    #ydot = list(map(lambda x,y:x*y, ydot, Pd['dynamic']))
 
     return ydot
 
@@ -1102,7 +1102,7 @@ def grandi_bers_rhs_atrial(y, t, Pd):
 
     ydot = [d_m,d_h, d_j, d_d, d_f,d_fcaBj, d_fcaBsl, d_xtof, d_ytof, d_xkr, d_xks, d_RyRr, d_RyRo, d_RyRi, d_NaBj, d_NaBsl, d_TnCL, d_TnCHc, d_TnCHm, d_CaM, d_Myoc, d_Myom, d_SRB, d_SLLj, d_SLLsl, d_SLHj, d_SLHsl, d_Csqnb, d_Ca_sr, d_Naj, d_Nasl, d_Nai, d_Ki, d_Caj, d_Casl, d_Cai, d_Vm,  d_rkuro, d_skuro, d_ml, d_hl, d_INal]
     
-    ydot = list(map(lambda x,y:x*y, ydot, Pd['dynamic']))
+    #ydot = list(map(lambda x,y:x*y, ydot, Pd['dynamic']))
 
     return ydot
 
