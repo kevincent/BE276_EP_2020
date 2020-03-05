@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.integrate import ode
+from scipy.integrate import odeint
 from math import exp, log, sqrt, pi, fsum
 from ipywidgets import interact, FloatSlider, Dropdown
 
@@ -106,8 +106,8 @@ def Activation(P,V,duration):
     
     V_H = -70
     y0 = np.zeros((7))
-    alpha = math.exp((V_H-P[0])/P[1]);
-    beta = math.exp((V_H-P[2])/P[3])*math.exp(-(V_H+P[4])/P[5])/(P[6]+P[7]*math.exp(-(V_H+P[8])/P[9]));
+    alpha = exp((V_H-P[0])/P[1]);
+    beta = exp((V_H-P[2])/P[3])*exp(-(V_H+P[4])/P[5])/(P[6]+P[7]*exp(-(V_H+P[8])/P[9]));
     gamma = beta/alpha
     Kblk = P[10]/P[11]
     o = 1/((1+gamma)**4+Kblk)
