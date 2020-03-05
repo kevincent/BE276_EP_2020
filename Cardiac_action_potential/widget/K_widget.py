@@ -45,7 +45,7 @@ class Markov_Widget():
         plt.legend((r'Experiment',r'Model'))
         plt.show()        
         
-def f(t,y,P):
+def f(y,t,P):
 # A Markov state model for the rapidly activating inward rectifying potassium current (IKur)      
     
     V = P[-1] # For simplicity we pass voltage as a parameter (when would this be a bad idea?)
@@ -86,50 +86,46 @@ def f(t,y,P):
     A[O,B] = 0
     A[B,O] = 0
     
+    A_s = -np.sum(A, axis = 1)
     for i in range(n):
-        A[i,i] = -fsum(A[:,i])
+        A[i,i] = A_s[i]
     
     dy = A.dot(y)
-    return [dy]
+    return dy
 
-def Activation(P,data,duration):
+def Activation(P,V,duration):
     
-    #configure inputs
-    V = data
-    ntsteps = int(duration*10)
-    
+    #fixed time-step
+    dt = 0.1
+    ntsteps = int(duration*(1/dt))
+
     #initialize outputs
-    t = np.zeros((ntsteps))
-    y = np.zeros((ntsteps,7))
+    t = np.linspace(0,duration,int(duration*(1/dt)+1))
     model_peaks = np.zeros((len(V)))
-    Po_out = np.zeros((ntsteps,len(V)))
+    Po_out = np.zeros((ntsteps+1,len(V)))
     
+    V_H = -70
+    y0 = np.zeros((7))
+    alpha = math.exp((V_H-P[0])/P[1]);
+    beta = math.exp((V_H-P[2])/P[3])*math.exp(-(V_H+P[4])/P[5])/(P[6]+P[7]*math.exp(-(V_H+P[8])/P[9]));
+    gamma = beta/alpha
+    Kblk = P[10]/P[11]
+    o = 1/((1+gamma)**4+Kblk)
+    
+    # The initial conditions for the model:
+    y0 = [o, o*Kblk, o*4*gamma, o*6*gamma**2, o*4*gamma**3, o*gamma**4, 0]
+
     #step through the test potentials in your reference data
     for n,i in enumerate(V):
         
-        # First reset your initial conditions to the holding potential at the beginning of each step
-        # Question: Is this always a good idea? Why or why not?
-        
-        V_H = -70
-        y0 = Init(V_H, P)
-        t0 = 0
-        
-        # collect the parameters and include the step voltage in the last position
+        # Collect the parameters and include the step voltage in the last position
         if n==0 and len(P)<14:        
             P.append(i)
         else:
             P[-1]=i
             
-        # integrate the model at the current step potential                         
-        r = ode(f).set_integrator('vode', method='bdf', with_jacobian=False, rtol=1e-5, max_step=0.1)
-        r.set_initial_value(y0,t0).set_f_params(P)
-        dt = 0.1
-        ind = 0
-        while r.successful() and r.t < duration and ind < ntsteps:
-            r.integrate(r.t+dt)
-            t[ind]=r.t
-            y[ind,:]=r.y
-            ind = ind+1
+        # integrate the model at the current step potential
+        y = odeint(f, y0, t, (P,))                         
         
         #store the open probability data and calculate the error metrics
         Po_out[:,n] = y[:,0]
